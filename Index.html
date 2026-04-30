@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NS Math 10 Practice Exam — Version 4 (Hot Zones)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, serif; background: linear-gradient(135deg, #fce4ec, #f8bbd0); min-height: 100vh; padding: 20px; color: #2c3e50; }
+  .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); overflow: hidden; }
+  header { background: linear-gradient(135deg, #ad1457, #d81b60); color: white; padding: 30px; text-align: center; }
+  header h1 { font-size: 28px; margin-bottom: 8px; }
+  .version-badge { display: inline-block; background: rgba(255,255,255,0.25); padding: 4px 14px; border-radius: 20px; font-size: 13px; margin-top: 8px; }
+  .exam-info { background: #f8f9fa; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 2px solid #e9ecef; }
+  #timer { font-family: 'Courier New', monospace; font-size: 18px; font-weight: bold; color: #ad1457; background: white; padding: 5px 12px; border-radius: 6px; border: 2px solid #ad1457; }
+  .progress-bar { height: 6px; background: #e9ecef; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #d81b60, #ec407a); width: 0%; transition: width 0.4s; }
+  .section-tag { display: inline-block; background: #ad1457; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; }
+  .section-tag.hot { background: #c2185b; }
+  .hot-flag { display: inline-block; background: #ffebee; color: #c62828; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-left: 8px; border: 1px solid #ef9a9a; }
+  .question-area { padding: 35px 40px; min-height: 400px; }
+  .question-text { font-size: 18px; line-height: 1.6; margin-bottom: 25px; }
+  .options { display: grid; gap: 12px; }
+  .option { padding: 15px 20px; border: 2px solid #dee2e6; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 16px; background: white; display: flex; align-items: center; gap: 15px; }
+  .option:hover { border-color: #d81b60; background: #fce4ec; }
+  .option.selected { border-color: #d81b60; background: #f8bbd0; font-weight: 600; }
+  .option.correct { border-color: #28a745; background: #d4edda; color: #155724; }
+  .option.incorrect { border-color: #dc3545; background: #f8d7da; color: #721c24; }
+  .option-letter { width: 32px; height: 32px; border-radius: 50%; background: #f1f3f5; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; }
+  .option.selected .option-letter { background: #d81b60; color: white; }
+  .option.correct .option-letter { background: #28a745; color: white; }
+  .option.incorrect .option-letter { background: #dc3545; color: white; }
+  .feedback { margin-top: 20px; padding: 18px; border-radius: 8px; }
+  .feedback.correct { background: #d4edda; border-left: 4px solid #28a745; color: #155724; }
+  .feedback.incorrect { background: #fff3cd; border-left: 4px solid #ffc107; color: #856404; }
+  .feedback strong { display: block; margin-bottom: 6px; }
+  .controls { padding: 20px 40px; background: #f8f9fa; display: flex; justify-content: space-between; gap: 15px; border-top: 2px solid #e9ecef; }
+  button { padding: 12px 28px; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+  .btn-primary { background: #d81b60; color: white; }
+  .btn-primary:hover:not(:disabled) { background: #ad1457; transform: translateY(-2px); }
+  .btn-secondary { background: white; color: #d81b60; border: 2px solid #d81b60; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .start-screen, .results-screen { padding: 50px 40px; text-align: center; }
+  .topics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 25px 0; }
+  .topic-card { background: #fce4ec; border: 2px solid #f48fb1; border-radius: 8px; padding: 12px; font-size: 13px; color: #ad1457; font-weight: 600; }
+  .hot-zone-banner { background: #fff3e0; border: 2px solid #ffb74d; border-radius: 8px; padding: 16px; margin: 20px 0; color: #6d4c41; text-align: left; }
+  .hot-zone-banner h3 { color: #d84315; margin-bottom: 8px; }
+  .score-circle { width: 180px; height: 180px; border-radius: 50%; margin: 20px auto; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: bold; }
+  .score-percent { font-size: 48px; }
+  .breakdown { margin: 30px auto; max-width: 500px; text-align: left; }
+  .breakdown-item { display: flex; justify-content: space-between; padding: 12px 16px; background: #f8f9fa; margin-bottom: 8px; border-radius: 6px; border-left: 4px solid #d81b60; }
+  .review-question { background: #f8f9fa; padding: 18px; border-radius: 8px; margin-bottom: 12px; text-align: left; }
+  .review-question.correct-q { border-left: 4px solid #28a745; }
+  .review-question.wrong-q { border-left: 4px solid #dc3545; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>🔥 Nova Scotia Mathematics 10</h1>
+    <p>Provincial Exam Practice — Hot Zones Edition</p>
+    <div class="version-badge">VERSION 4 · Where Students Lose the Most Marks</div>
+  </header>
+
+  <div id="start-screen" class="start-screen">
+    <h2 style="color:#ad1457;margin-bottom:20px;">Target Your Weak Spots</h2>
+    <p style="line-height:1.7;margin-bottom:15px;">This 25-question exam zeroes in on the FOUR "hot zones" identified by past NS provincial exam data — areas where historical student scores were below 60%, plus other commonly-missed topics not covered elsewhere.</p>
+    
+    <div class="hot-zone-banner">
+      <h3>⚠️ The Four Hot Zones</h3>
+      <div style="font-size:14px;line-height:1.7;">
+        🔴 Negative exponents & multi-law expressions <strong>(only 8% historical success)</strong><br>
+        🔴 Factoring polynomials with concrete/pictorial models <strong>(under 50%)</strong><br>
+        🔴 Surface area & volume when dimensions change <strong>(only 43%)</strong><br>
+        🔴 Correlation coefficient confused with slope <strong>(under 60%)</strong>
+      </div>
+    </div>
+    
+    <div class="topics-grid">
+      <div class="topic-card">⚡ Hot: Negative Exponents</div>
+      <div class="topic-card">⚡ Hot: Factoring Order</div>
+      <div class="topic-card">⚡ Hot: SA & Volume Scaling</div>
+      <div class="topic-card">⚡ Hot: Correlation</div>
+      <div class="topic-card">📐 Parallel & Perpendicular</div>
+      <div class="topic-card">📊 Discrete vs Continuous</div>
+      <div class="topic-card">📋 Vertical Line Test</div>
+      <div class="topic-card">💵 Gross vs Net Pay</div>
+    </div>
+    
+    <p>Built from NS HRCE Math 10 hot-zone data. ⏱️ Suggested time: 75 minutes</p>
+    <button class="btn-primary" onclick="startExam()" style="margin-top:25px;padding:15px 40px;font-size:17px;">Begin Exam →</button>
+  </div>
+
+  <div id="exam-info" class="exam-info" style="display:none;">
+    <div><strong>Question:</strong> <span id="q-counter">1 / 25</span></div>
+    <div><strong>Score:</strong> <span id="score-display">0 / 0</span></div>
+    <div id="timer">00:00</div>
+  </div>
+  <div class="progress-bar" id="progress-container" style="display:none;"><div class="progress-fill" id="progress-fill"></div></div>
+  <div id="question-area" class="question-area" style="display:none;"></div>
+  <div id="controls" class="controls" style="display:none;">
+    <button class="btn-secondary" id="prev-btn" onclick="prevQuestion()" disabled>← Previous</button>
+    <button class="btn-primary" id="check-btn" onclick="checkAnswer()">Check Answer</button>
+    <button class="btn-primary" id="next-btn" onclick="nextQuestion()" style="display:none;">Next →</button>
+  </div>
+
+  <div id="results-screen" class="results-screen" style="display:none;">
+    <h2 style="color:#ad1457;">🎉 Exam Complete!</h2>
+    <div class="score-circle" id="score-circle">
+      <div class="score-percent" id="final-percent">0%</div>
+      <div style="font-size:14px;">Final Score</div>
+    </div>
+    <p id="result-message" style="font-size:18px;margin:20px 0;"></p>
+    <div class="breakdown" id="topic-breakdown"></div>
+    <div style="margin-top:30px;">
+      <button class="btn-primary" onclick="restartExam()">🔄 Retake</button>
+      <button class="btn-secondary" onclick="reviewAnswers()" style="margin-left:10px;">📝 Review Answers</button>
+    </div>
+    <div id="review-section" style="margin-top:30px;display:none;"></div>
+  </div>
+</div>
+
+<script>
+const questions = [
+  // ===== HOT ZONE 1: Negative exponents & multi-law expressions =====
+  { topic:"🔥 Negative Exponents", hot:true, question:"Evaluate (−3)⁴.", options:["−81","−12","12","81"], correct:3, explanation:"(−3)⁴ = (−3)(−3)(−3)(−3) = 9 × 9 = 81. The parentheses include the negative, so the negative is multiplied 4 times — even number of negatives = positive." },
+  { topic:"🔥 Negative Exponents", hot:true, question:"Evaluate −3⁴.", options:["−81","−12","12","81"], correct:0, explanation:"Without parentheses, the exponent applies ONLY to the 3, not the negative sign. So −3⁴ = −(3⁴) = −81. THIS IS THE #1 EXAM TRAP." },
+  { topic:"🔥 Negative Exponents", hot:true, question:"Evaluate (−2)⁻³.", options:["−1/8","1/8","−8","8"], correct:0, explanation:"(−2)⁻³ = 1/(−2)³ = 1/(−8) = −1/8. A negative exponent flips the base; the sign of the answer comes from the cube of −2." },
+  { topic:"🔥 Negative Exponents", hot:true, question:"Simplify (2x³y⁻²)⁻²", options:["x⁻⁶y⁴/4","y⁴/(4x⁶)","4y⁴/x⁶","x⁶/(4y⁴)"], correct:1, explanation:"Apply -2 to each: 2⁻²·x⁻⁶·y⁴ = (1/4)·(1/x⁶)·y⁴ = y⁴/(4x⁶)." },
+  { topic:"🔥 Negative Exponents", hot:true, question:"Which is greatest? 2⁵⁵⁰, 16(2⁴⁰⁰), 4³⁰⁰, 1024⁵⁰", options:["2⁵⁵⁰","16(2⁴⁰⁰)","4³⁰⁰","1024⁵⁰"], correct:2, explanation:"Common base 2: 2⁵⁵⁰ stays. 16(2⁴⁰⁰) = 2⁴·2⁴⁰⁰ = 2⁴⁰⁴. 4³⁰⁰ = 2⁶⁰⁰. 1024⁵⁰ = 2⁵⁰⁰. Largest exponent: 2⁶⁰⁰, so 4³⁰⁰ wins." },
+
+  // ===== HOT ZONE 2: Factoring (especially common-factor-first) =====
+  { topic:"🔥 Factoring", hot:true, question:"Factor completely: 18m² − 2n²", options:["(18m − 2n)(m + n)","2(9m² − n²)","2(3m + n)(3m − n)","(3m + n)²(3m − n)"], correct:2, explanation:"STEP 1 (always): GCF = 2 → 2(9m² − n²). STEP 2: Difference of squares → 2(3m + n)(3m − n). Don't stop at step 1!" },
+  { topic:"🔥 Factoring", hot:true, question:"Factor completely: 4x³ − 36x", options:["4x(x² − 9)","4x(x + 3)(x − 3)","(2x − 6)(2x² + 6x)","x(4x + 12)(x − 3)"], correct:1, explanation:"GCF first: 4x(x² − 9). Then difference of squares: 4x(x + 3)(x − 3). Always finish factoring completely." },
+  { topic:"🔥 Factoring", hot:true, question:"Algebra tiles: a rectangle is built with 1 big square (x²), 5 long rectangles (x), and 6 small squares (1). What does it factor to?", options:["(x + 1)(x + 6)","(x + 2)(x + 3)","(x + 5)(x + 1)","(x + 6)(x − 1)"], correct:1, explanation:"Tile arrangement represents x² + 5x + 6. Find two numbers that multiply to 6 and add to 5: 2 and 3. So (x + 2)(x + 3). The side lengths of the tile rectangle ARE the factors." },
+  { topic:"🔥 Factoring", hot:true, question:"Factor: 8x² + 22x + 15", options:["(2x + 5)(4x + 3)","(2x + 3)(4x + 5)","(8x + 5)(x + 3)","(8x + 3)(x + 5)"], correct:1, explanation:"ac = 120, b = 22. Two numbers that multiply to 120 and add to 22: 10 and 12. 8x² + 10x + 12x + 15 = 2x(4x+5) + 3(4x+5) = (2x+3)(4x+5)." },
+
+  // ===== HOT ZONE 3: SA & Volume scaling (k², k³) =====
+  { topic:"🔥 SA/V Scaling", hot:true, question:"A sphere has its radius TRIPLED. By what factor does the volume increase?", options:["× 3","× 9","× 27","× 81"], correct:2, explanation:"Volume scales by k³. If k = 3 (radius tripled), V is multiplied by 3³ = 27. NOT × 3 (that's the linear scale)." },
+  { topic:"🔥 SA/V Scaling", hot:true, question:"A cube has its side length DOUBLED. By what factor does the surface area increase?", options:["× 2","× 4","× 6","× 8"], correct:1, explanation:"Surface area scales by k². If k = 2 (sides doubled), SA is multiplied by 2² = 4." },
+  { topic:"🔥 SA/V Scaling", hot:true, question:"A cylinder's radius and height are both HALVED. What happens to its volume?", options:["Cut by half (× 1/2)","Cut to a quarter (× 1/4)","Cut to one-eighth (× 1/8)","Cut to one-sixteenth (× 1/16)"], correct:2, explanation:"All linear dimensions halved means k = 1/2. Volume scales by k³ = (1/2)³ = 1/8." },
+  { topic:"🔥 SA/V Scaling", hot:true, question:"Two similar cones have radii 4 cm and 12 cm. The smaller has volume 100 cm³. What is the larger's volume?", options:["300 cm³","900 cm³","2,700 cm³","7,200 cm³"], correct:2, explanation:"Scale factor k = 12/4 = 3. Volume scales by k³ = 27. Larger volume = 100 × 27 = 2,700 cm³." },
+
+  // ===== HOT ZONE 4: Correlation coefficient =====
+  { topic:"🔥 Correlation", hot:true, question:"Which correlation coefficient indicates the STRONGEST linear relationship?", options:["r = +0.65","r = −0.92","r = +0.45","r = 0.0"], correct:1, explanation:"Strength is measured by ABSOLUTE VALUE of r. |−0.92| = 0.92 is largest. The negative sign just means the slope is downward — not weaker. r = −0.92 is stronger than r = +0.65." },
+  { topic:"🔥 Correlation", hot:true, question:"True or false: A correlation of r = +1 indicates a stronger relationship than r = −1.", options:["True — positive correlations are stronger","False — they are equally strong","True — only positive r values count","False — r = −1 means no correlation"], correct:1, explanation:"r = +1 and r = −1 are EQUALLY strong (both perfect linear fits). The sign only tells you direction (up vs down), not strength." },
+  { topic:"🔥 Correlation", hot:true, question:"A scatter plot has points scattered randomly with no clear trend. The correlation coefficient r is most likely:", options:["Close to +1","Close to −1","Close to 0","Exactly 0.5"], correct:2, explanation:"No clear trend = weak correlation = |r| close to 0. Strong correlations have |r| close to 1." },
+
+  // ===== Parallel and perpendicular slopes =====
+  { topic:"Parallel/Perpendicular", question:"What is the slope of a line PERPENDICULAR to y = (2/3)x + 5?", options:["2/3","−2/3","3/2","−3/2"], correct:3, explanation:"Perpendicular slopes are NEGATIVE RECIPROCALS. Flip 2/3 to get 3/2, then negate: −3/2." },
+  { topic:"Parallel/Perpendicular", question:"Which line is PARALLEL to 4x − 2y + 6 = 0?", options:["y = −2x + 1","y = 2x + 1","y = (1/2)x + 1","y = −(1/2)x + 1"], correct:1, explanation:"Rearrange 4x − 2y + 6 = 0 → 2y = 4x + 6 → y = 2x + 3. Slope is 2. Parallel = same slope, so y = 2x + 1." },
+
+  // ===== Discrete vs Continuous =====
+  { topic:"Discrete/Continuous", question:"A graph shows the cost of buying 1, 2, 3, ... pizzas. Should the data points be connected with a line?", options:["Yes — continuous data","No — discrete data (number of pizzas is whole)","Yes — but only with a curve","No — only if extrapolating"], correct:1, explanation:"You can't buy 2.5 pizzas. The number of pizzas is a discrete (whole-number) variable, so the points stay separate — don't connect them." },
+  { topic:"Discrete/Continuous", question:"A graph shows water temperature changing over time. The data is:", options:["Discrete — connect with dots only","Continuous — connect smoothly with a line","Discrete — leave as bars","Neither discrete nor continuous"], correct:1, explanation:"Temperature changes smoothly through every value (e.g., 21.4°, 21.41°…). Continuous data — connect with a smooth line." },
+
+  // ===== Vertical Line Test =====
+  { topic:"Function Tests", question:"A graph fails the vertical line test. What does this mean?", options:["It is not a relation","It is not a function","It has no domain","It is undefined"], correct:1, explanation:"Failing the vertical line test means at some x-value there are 2+ y-values, which violates the function rule (each input → one output). It IS still a relation, just not a function." },
+
+  // ===== Gross vs Net Pay =====
+  { topic:"Gross vs Net Pay", question:"Maya's gross weekly pay is $850. Her deductions: federal tax $95, provincial tax $40, CPP $42, EI $14. What is her NET pay?", options:["$659","$685","$691","$754"], correct:0, explanation:"Total deductions: 95 + 40 + 42 + 14 = $191. Net = Gross − deductions = 850 − 191 = $659." },
+  { topic:"Gross vs Net Pay", question:"Carlos earns $22/hr. He worked 45 hours one week. Overtime (past 40 hrs) is paid at time-and-a-half. What is his GROSS pay?", options:["$990","$1,045","$1,110","$1,485"], correct:1, explanation:"Regular: 40 × $22 = $880. Overtime: 5 × $22 × 1.5 = $165. Gross = $880 + $165 = $1,045." },
+
+  // ===== Budgeting =====
+  { topic:"Budgeting", question:"Which is a FIXED expense in a personal budget?", options:["Groceries","Entertainment","Rent","Gasoline"], correct:2, explanation:"Fixed = same amount each month, recurring (rent, phone bill, insurance). Groceries and gas are variable; entertainment is discretionary." }
+];
+
+let currentQ = 0;
+let userAnswers = new Array(questions.length).fill(null);
+let answered = new Array(questions.length).fill(false);
+let startTime = null;
+let timerInterval = null;
+
+function startExam() {
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('exam-info').style.display = 'flex';
+  document.getElementById('progress-container').style.display = 'block';
+  document.getElementById('question-area').style.display = 'block';
+  document.getElementById('controls').style.display = 'flex';
+  startTime = Date.now();
+  timerInterval = setInterval(updateTimer, 1000);
+  showQuestion();
+}
+
+function updateTimer() {
+  const elapsed = Math.floor((Date.now() - startTime) / 1000);
+  const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+  const s = String(elapsed % 60).padStart(2, '0');
+  document.getElementById('timer').textContent = m + ':' + s;
+}
+
+function showQuestion() {
+  const q = questions[currentQ];
+  let optionsHtml = '<div class="options">';
+  q.options.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    let classes = 'option';
+    if (userAnswers[currentQ] === i) classes += ' selected';
+    if (answered[currentQ]) {
+      if (i === q.correct) classes += ' correct';
+      else if (userAnswers[currentQ] === i) classes += ' incorrect';
+    }
+    optionsHtml += '<div class="' + classes + '" onclick="selectOption(' + i + ')"><div class="option-letter">' + letter + '</div><div>' + opt + '</div></div>';
+  });
+  optionsHtml += '</div>';
+
+  let feedbackHtml = '';
+  if (answered[currentQ]) {
+    const correct = userAnswers[currentQ] === q.correct;
+    feedbackHtml = '<div class="feedback ' + (correct ? 'correct' : 'incorrect') + '"><strong>' + (correct ? '✓ Correct!' : '✗ Not quite.') + '</strong>' + q.explanation + '</div>';
+  }
+
+  const hotFlag = q.hot ? '<span class="hot-flag">HOT ZONE</span>' : '';
+  document.getElementById('question-area').innerHTML =
+    '<span class="section-tag' + (q.hot ? ' hot' : '') + '">' + q.topic + '</span>' + hotFlag +
+    '<div style="color:#6c757d;font-size:14px;margin:8px 0;">Question ' + (currentQ + 1) + ' of ' + questions.length + '</div>' +
+    '<div class="question-text">' + q.question + '</div>' +
+    optionsHtml + feedbackHtml;
+
+  document.getElementById('prev-btn').disabled = currentQ === 0;
+  document.getElementById('q-counter').textContent = (currentQ + 1) + ' / ' + questions.length;
+  const score = userAnswers.filter((a, i) => answered[i] && a === questions[i].correct).length;
+  const totalAnswered = answered.filter(a => a).length;
+  document.getElementById('score-display').textContent = score + ' / ' + totalAnswered;
+  document.getElementById('progress-fill').style.width = ((currentQ + 1) / questions.length * 100) + '%';
+
+  if (answered[currentQ]) {
+    document.getElementById('check-btn').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'inline-block';
+    document.getElementById('next-btn').textContent = currentQ === questions.length - 1 ? 'Finish Exam ✓' : 'Next →';
+  } else {
+    document.getElementById('check-btn').style.display = 'inline-block';
+    document.getElementById('next-btn').style.display = 'none';
+  }
+}
+
+function selectOption(i) {
+  if (answered[currentQ]) return;
+  userAnswers[currentQ] = i;
+  showQuestion();
+}
+
+function checkAnswer() {
+  if (userAnswers[currentQ] === null) { alert('Please select an answer first!'); return; }
+  answered[currentQ] = true;
+  showQuestion();
+}
+
+function nextQuestion() {
+  if (currentQ === questions.length - 1) { showResults(); return; }
+  currentQ++;
+  showQuestion();
+}
+
+function prevQuestion() { if (currentQ > 0) { currentQ--; showQuestion(); } }
+
+function showResults() {
+  clearInterval(timerInterval);
+  document.getElementById('exam-info').style.display = 'none';
+  document.getElementById('progress-container').style.display = 'none';
+  document.getElementById('question-area').style.display = 'none';
+  document.getElementById('controls').style.display = 'none';
+  document.getElementById('results-screen').style.display = 'block';
+
+  const score = userAnswers.filter((a, i) => a === questions[i].correct).length;
+  const pct = Math.round(score / questions.length * 100);
+  document.getElementById('final-percent').textContent = pct + '%';
+
+  let bg, msg;
+  if (pct >= 80) { bg = 'linear-gradient(135deg,#56ab2f,#a8e063)'; msg = '🌟 Outstanding! You\'ve crushed the hot zones — these are where most students lose marks.'; }
+  else if (pct >= 65) { bg = 'linear-gradient(135deg,#f7971e,#ffd200)'; msg = '👍 Solid work on the hardest topics. Polish the ones you missed.'; }
+  else if (pct >= 50) { bg = 'linear-gradient(135deg,#f2994a,#f2c94c)'; msg = 'These ARE the hardest topics. Review the explanations and retry — you can master them.'; }
+  else { bg = 'linear-gradient(135deg,#cb2d3e,#ef473a)'; msg = 'Hot zones are tough by design. Reread your formula sheet, especially the warning callouts, and retry.'; }
+  document.getElementById('score-circle').style.background = bg;
+  document.getElementById('result-message').textContent = msg;
+
+  const topics = {};
+  questions.forEach((q, i) => {
+    if (!topics[q.topic]) topics[q.topic] = { correct: 0, total: 0 };
+    topics[q.topic].total++;
+    if (userAnswers[i] === q.correct) topics[q.topic].correct++;
+  });
+  let html = '<h3 style="margin-bottom:15px;color:#ad1457;">Performance by Topic</h3>';
+  Object.entries(topics).forEach(([t, d]) => {
+    const tp = Math.round(d.correct / d.total * 100);
+    html += '<div class="breakdown-item"><span><strong>' + t + '</strong></span><span>' + d.correct + '/' + d.total + ' (' + tp + '%)</span></div>';
+  });
+  document.getElementById('topic-breakdown').innerHTML = html;
+}
+
+function reviewAnswers() {
+  const section = document.getElementById('review-section');
+  if (section.style.display === 'block') { section.style.display = 'none'; return; }
+  let html = '<h3 style="color:#ad1457;margin-bottom:15px;">Detailed Review</h3>';
+  questions.forEach((q, i) => {
+    const userAns = userAnswers[i];
+    const correct = userAns === q.correct;
+    const userLetter = userAns !== null ? String.fromCharCode(65 + userAns) : 'No answer';
+    const correctLetter = String.fromCharCode(65 + q.correct);
+    html += '<div class="review-question ' + (correct ? 'correct-q' : 'wrong-q') + '">' +
+      '<div style="font-size:13px;color:#6c757d;margin-bottom:6px;">' + q.topic + ' · Q' + (i+1) + '</div>' +
+      '<div style="font-weight:600;margin-bottom:8px;">' + q.question + '</div>' +
+      '<div>Your answer: <strong>' + userLetter + '</strong>' + (userAns !== null ? ' — ' + q.options[userAns] : '') + '</div>' +
+      (!correct ? '<div style="color:#28a745;">Correct: <strong>' + correctLetter + '</strong> — ' + q.options[q.correct] + '</div>' : '') +
+      '<div style="font-size:14px;color:#495057;margin-top:8px;padding-top:8px;border-top:1px solid #dee2e6;">' + q.explanation + '</div></div>';
+  });
+  section.innerHTML = html;
+  section.style.display = 'block';
+}
+
+function restartExam() {
+  currentQ = 0;
+  userAnswers = new Array(questions.length).fill(null);
+  answered = new Array(questions.length).fill(false);
+  document.getElementById('results-screen').style.display = 'none';
+  document.getElementById('start-screen').style.display = 'block';
+  document.getElementById('review-section').style.display = 'none';
+}
+</script>
+</body>
+</html>
